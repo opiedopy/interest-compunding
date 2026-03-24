@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jafur's Compound Interest Calculator</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;600;700&display=swap');
+
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+
+body {
+min-height: 100vh;
+background: linear-gradient(135deg, #0c0c0c 0%, #1a0033 25%, #330066 50%, #1a0033 75%, #0c0c0c 100%);
+background-size: 400% 400%;
+animation: gradientShift 8s ease infinite;
+font-family: 'Poppins', sans-serif;
+color: #ffffff;
+overflow-x: hidden;
+}
+
+@keyframes gradientShift {
+0%, 100% { background-position: 0% 50%; }
+50% { background-position: 100% 50%; }
+}
+
+.container {
+max-width: 800px;
+margin: 0 auto;
+padding: 20px;
+min-height: 100vh;
+display: flex;
+flex-direction: column;
+justify-content: center;
+position: relative;
+}
+
+.title {
+font-family: 'Orbitron', monospace;
+font-size: clamp(2.5rem, 6vw, 4rem);
+font-weight: 900;
+text-align: center;
+background: linear-gradient(45deg, #00ff88, #00ccff, #ff00ff, #ffff00);
+background-size: 300% 300%;
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+animation: titleGlow 3s ease-in-out infinite alternate;
+text-shadow: 0 0 30px rgba(0, 255, 136, 0.5);
+margin-bottom: 40px;
+letter-spacing: 2px;
+}
+
+@keyframes titleGlow {
+from { filter: hue-rotate(0deg); }
+to { filter: hue-rotate(360deg); }
+}
+
+.calculator-card {
+background: rgba(255, 255, 255, 0.05);
+backdrop-filter: blur(20px);
+border: 1px solid rgba(255, 255, 255, 0.1);
+border-radius: 24px;
+padding: 40px;
+box-shadow:
+0 25px 50px rgba(0, 0, 0, 0.5),
+0 0 100px rgba(0, 255, 136, 0.2),
+inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.input-group {
+margin-bottom: 30px;
+}
+
+.input-label {
+display: block;
+font-size: 1.1rem;
+font-weight: 600;
+margin-bottom: 12px;
+color: #00ff88;
+text-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+}
+
+.slider-container {
+position: relative;
+height: 60px;
+}
+
+.custom-slider {
+width: 100%;
+height: 8px;
+border-radius: 10px;
+background: linear-gradient(90deg, rgba(0, 255, 136, 0.2), rgba(0, 204, 255, 0.2));
+outline: none;
+-webkit-appearance: none;
+appearance: none;
+position: relative;
+}
+
+.custom-slider::-webkit-slider-thumb {
+-webkit-appearance: none;
+appearance: none;
+width: 28px;
+height: 28px;
+border-radius: 50%;
+background: linear-gradient(45deg, #00ff88, #00ccff);
+cursor: pointer;
+box-shadow: 0 0 20px rgba(0, 255, 136, 0.6);
+transition: all 0.3s ease;
+}
+
+.custom-slider::-webkit-slider-thumb:hover {
+transform: scale(1.2);
+box-shadow: 0 0 30px rgba(0, 255, 136, 0.8);
+}
+
+.slider-value {
+position: absolute;
+top: -10px;
+right: 0;
+background: rgba(0, 0, 0, 0.8);
+color: #00ff88;
+padding: 8px 12px;
+border-radius: 20px;
+font-weight: 700;
+font-size: 1rem;
+font-family: 'Orbitron', monospace;
+box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+min-width: 80px;
+text-align: center;
+}
+
+.checkbox-group {
+display: flex;
+gap: 20px;
+flex-wrap: wrap;
+}
+
+.checkbox-item {
+display: flex;
+align-items: center;
+gap: 10px;
+font-size: 1rem;
+cursor: pointer;
+padding: 12px 20px;
+border-radius: 12px;
+transition: all 0.3s ease;
+border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.checkbox-item:hover {
+background: rgba(0, 255, 136, 0.1);
+border-color: #00ff88;
+}
+
+.checkbox-item input:checked + label {
+color: #00ff88;
+text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+}
+
+.checkbox-item input {
+width: 20px;
+height: 20px;
+accent-color: #00ff88;
+cursor: pointer;
+}
+
+.result-display {
+margin-top: 40px;
+text-align: center;
+}
+
+.result-value {
+font-family: 'Orbitron', monospace;
+font-size: clamp(2rem, 5vw, 4rem);
+font-weight: 900;
+background: linear-gradient(45deg, #00ff88, #ffff00, #ff00ff);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+background-size: 200% 200%;
+animation: resultGlow 2s ease-in-out infinite alternate;
+margin-bottom: 20px;
+}
+
+@keyframes resultGlow {
+from { filter: hue-rotate(0deg) drop-shadow(0 0 20px rgba(0, 255, 136, 0.5)); }
+to { filter: hue-rotate(120deg) drop-shadow(0 0 30px rgba(255, 255, 0, 0.7)); }
+}
+
+.particles {
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+pointer-events: none;
+z-index: -1;
+}
+
+.particle {
+position: absolute;
+width: 4px;
+height: 4px;
+background: rgba(0, 255, 136, 0.6);
+border-radius: 50%;
+animation: float 6s infinite linear;
+}
+
+@keyframes float {
+0% {
+transform: translateY(100vh) rotate(0deg);
+opacity: 0;
+}
+10% {
+opacity: 1;
+}
+90% {
+opacity: 1;
+}
+100% {
+transform: translateY(-100px) rotate(360deg);
+opacity: 0;
+}
+}
+
+@media (max-width: 768px) {
+.container {
+padding: 10px;
+}
+
+.calculator-card {
+padding: 20px;
+}
+
+.checkbox-group {
+justify-content: center;
+}
+}
+</style>
+</head>
+<body>
+<div class="particles" id="particles"></div>
+
+<div class="container">
+<h1 class="title">Jafur's Compound Interest Calculator</h1>
+
+<div class="calculator-card">
+<div class="input-group">
+<label class="input-label">Initial Investment</label>
+<div class="slider-container">
+<input type="range" class="custom-slider" id="investmentSlider" min="0" max="9" value="0">
+<div class="slider-value" id="investmentValue">$1,000</div>
+</div>
+</div>
+
+<div class="input-group">
+<label class="input-label">Investment Duration</label>
+<div class="slider-container">
+<input type="range" class="custom-slider" id="durationSlider" min="0" max="7" value="0">
+<div class="slider-value" id="durationValue">1 Year</div>
+</div>
+</div>
+
+<div class="input-group">
+<label class="input-label">Annual Interest Rate</label>
+<div class="slider-container">
+<input type="range" class="custom-slider" id="rateSlider" min="0" max="90" step="1" value="50">
+<div class="slider-value" id="rateValue">5.0%</div>
+</div>
+</div>
+
+<div class="input-group">
+<label class="input-label">Compounding Frequency</label>
+<div class="checkbox-group">
+<div class="checkbox-item">
+<input type="radio" id="daily" name="compounding" value="daily">
+<label for="daily">Daily</label>
+</div>
+<div class="checkbox-item">
+<input type="radio" id="monthly" name="compounding" value="monthly" checked>
+<label for="monthly">Monthly</label>
+</div>
+<div class="checkbox-item">
+<input type="radio" id="yearly" name="compounding" value="yearly">
+<label for="yearly">Yearly</label>
+</div>
+</div>
+</div>
+
+<div class="result-display">
+<div class="result-value" id="resultValue">$1,000</div>
+<div style="font-size: 1.2rem; color: #888; margin-top: 10px;">
+Total value after selected period
+</div>
+</div>
+</div>
+</div>
+
+<script>
+// Investment amounts in thousands
+const investments = [1, 5, 10, 25, 50, 100, 250, 500, 750, 1000];
+
+// Duration options in years
+const durations = [1, 2, 5, 10, 20, 30, 40, 50];
+
+// Slider event handlers
+const investmentSlider = document.getElementById('investmentSlider');
+const investmentValue = document.getElementById('investmentValue');
+const durationSlider = document.getElementById('durationSlider');
+const durationValue = document.getElementById('durationValue');
+const rateSlider = document.getElementById('rateSlider');
+const rateValue = document.getElementById('rateValue');
+const resultValue = document.getElementById('resultValue');
+
+// Update investment display
+investmentSlider.addEventListener('input', (e) => {
+const index = parseInt(e.target.value);
+const amount = investments[index];
+investmentValue.textContent = `$${amount.toLocaleString()}K`;
+calculateResult();
+});
+
+// Update duration display
+durationSlider.addEventListener('input', (e) => {
+const index = parseInt(e.target.value);
+durationValue.textContent = `${durations[index]} Year${durations[index] > 1 ? 's' : ''}`;
+calculateResult();
+});
+
+// Update rate display
+rateSlider.addEventListener('input', (e) => {
+const rate = (parseInt(e.target.value) / 10).toFixed(1);
+rateValue.textContent = `${rate}%`;
+calculateResult();
+});
+
+// Compounding radio buttons
+document.querySelectorAll('input[name="compounding"]').forEach(radio => {
+radio.addEventListener('change', calculateResult);
+});
+
+function calculateResult() {
+const principal = investments[investmentSlider.value] * 1000;
+const years = durations[durationSlider.value];
+const annualRate = parseFloat(rateSlider.value) / 1000; // Convert slider value to decimal
+
+const compounding = document.querySelector('input[name="compounding"]:checked').value;
+let n = 1; // compounding periods per year
+
+switch(compounding) {
+case 'daily':
+n = 365;
+break;
+case 'monthly':
+n = 12;
+break;
+case 'yearly':
+n = 1;
+break;
+}
+
+// Compound interest formula: A = P(1 + r/n)^(nt)
+const amount = principal * Math.pow(1 + annualRate / n, n * years);
+
+resultValue.textContent = `$${amount.toLocaleString('en-US', {
+minimumFractionDigits: 0,
+maximumFractionDigits: 0
+})}`;
+
+// Add pulse animation to result
+resultValue.style.animation = 'none';
+setTimeout(() => {
+resultValue.style.animation = 'resultGlow 2s ease-in-out infinite alternate';
+}, 10);
+}
+
+// Initialize calculation
+calculateResult();
+
+// Create floating particles
+function createParticles() {
+const particlesContainer = document.getElementById('particles');
+for (let i = 0; i < 50; i++) {
+const particle = document.createElement('div');
+particle.className = 'particle';
+particle.style.left = Math.random() * 100 + '%';
+particle.style.animationDelay = Math.random() * 6 + 's';
+particle.style.animationDuration = (Math.random() * 3 + 4) + 's';
+particlesContainer.appendChild(particle);
+}
+}
+
+createParticles();
+
+// Recalculate on window resize for mobile
+window.addEventListener('resize', calculateResult);
+</script>
+</body>
+</html>
+
