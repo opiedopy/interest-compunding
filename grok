@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jafur’s Compound Interest Calculator</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500&amp;display=swap');
+
+:root {
+--tw-color-accent: #00f5ff;
+}
+
+body {
+background: linear-gradient(135deg, #0a0a2a 0%, #1a0b3d 50%, #0f1f3d 100%);
+}
+
+.glass {
+background: rgba(255, 255, 255, 0.08);
+backdrop-filter: blur(20px);
+}
+
+.neon-text {
+text-shadow:
+0 0 10px #00f5ff,
+0 0 20px #00f5ff;
+}
+
+input[type="range"] {
+accent-color: #00f5ff;
+}
+
+.slider-thumb {
+transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#result {
+animation: popIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes popIn {
+0% { transform: scale(0.8); opacity: 0; }
+100% { transform: scale(1); opacity: 1; }
+}
+
+.glow {
+box-shadow:
+0 0 15px -5px rgb(0 245 255),
+0 0 30px -10px rgb(0 245 255);
+}
+</style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-6 font-sans">
+<div class="max-w-4xl w-full">
+<!-- Header -->
+<div class="flex items-center justify-center mb-8">
+<div class="flex items-center gap-x-3">
+<div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-cyan-400 to-purple-500 flex items-center justify-center text-3xl shadow-inner glow">
+💰
+</div>
+<h1 class="text-6xl font-bold tracking-[-3px] neon-text bg-clip-text text-transparent bg-gradient-to-r from-cyan-300 via-purple-300 to-pink-300" style="font-family: 'Space Grotesk', sans-serif;">
+Jafur’s
+</h1>
+</div>
+<div class="ml-3 text-6xl font-bold tracking-[-3px] neon-text bg-clip-text text-transparent bg-gradient-to-r from-cyan-300 via-purple-300 to-pink-300" style="font-family: 'Space Grotesk', sans-serif;">
+Compound Interest Calculator
+</div>
+<div class="ml-auto text-xs uppercase tracking-[2px] font-medium px-4 py-2 rounded-3xl bg-white/10 text-cyan-300 flex items-center gap-x-1">
+<div class="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></div>
+LIVE • REAL-TIME
+</div>
+</div>
+
+<div class="glass rounded-3xl border border-white/10 p-8 shadow-2xl max-w-2xl mx-auto">
+
+<!-- Principal -->
+<div class="mb-8">
+<div class="flex justify-between items-baseline mb-3">
+<div class="text-lg font-semibold text-white">Initial Investment</div>
+<div id="principalDisplay" class="font-mono text-4xl font-semibold text-cyan-300 tabular-nums">$100,000</div>
+</div>
+<div class="relative">
+<input type="range" id="principalSlider"
+min="0" max="9" value="5" step="1"
+class="w-full cursor-pointer">
+<div class="flex justify-between text-xs text-cyan-200/70 mt-1 font-medium">
+<div>$1K</div>
+<div>$5K</div>
+<div>$10K</div>
+<div>$25K</div>
+<div>$50K</div>
+<div>$100K</div>
+<div>$250K</div>
+<div>$500K</div>
+<div>$750K</div>
+<div>$1M</div>
+</div>
+</div>
+</div>
+
+<!-- Duration -->
+<div class="mb-8">
+<div class="flex justify-between items-baseline mb-3">
+<div class="text-lg font-semibold text-white">Investment Duration</div>
+<div id="durationDisplay" class="font-mono text-4xl font-semibold text-cyan-300 tabular-nums">10 years</div>
+</div>
+<div class="relative">
+<input type="range" id="durationSlider"
+min="0" max="7" value="3" step="1"
+class="w-full cursor-pointer">
+<div class="flex justify-between text-xs text-cyan-200/70 mt-1 font-medium">
+<div>1 yr</div>
+<div>2 yr</div>
+<div>5 yr</div>
+<div>10 yr</div>
+<div>20 yr</div>
+<div>30 yr</div>
+<div>40 yr</div>
+<div>50 yr</div>
+</div>
+</div>
+</div>
+
+<!-- Rate -->
+<div class="mb-8">
+<div class="flex justify-between items-baseline mb-3">
+<div class="text-lg font-semibold text-white">Annual Interest Rate</div>
+<div id="rateDisplay" class="font-mono text-4xl font-semibold text-cyan-300 tabular-nums">5.0%</div>
+</div>
+<div class="relative">
+<input type="range" id="rateSlider"
+min="1" max="10" value="5" step="0.1"
+class="w-full cursor-pointer">
+<div class="flex justify-between text-xs text-cyan-200/70 mt-1 font-medium">
+<div>1%</div>
+<div>10%</div>
+</div>
+</div>
+</div>
+
+<!-- Compounding -->
+<div class="mb-8">
+<div class="text-lg font-semibold text-white mb-3">Compounding Frequency</div>
+<div class="grid grid-cols-3 gap-3">
+<!-- Daily -->
+<label class="group cursor-pointer">
+<input type="radio" name="frequency" id="freq-daily" value="daily" class="peer hidden">
+<div class="glass border border-white/10 rounded-2xl p-4 text-center transition-all peer-checked:border-cyan-400 peer-checked:bg-cyan-400/10 hover:border-cyan-400/50">
+<div class="text-3xl mb-2">🌍</div>
+<div class="font-semibold text-white">Daily</div>
+<div class="text-xs text-cyan-300/80">365× per year</div>
+</div>
+</label>
+
+<!-- Monthly -->
+<label class="group cursor-pointer">
+<input type="radio" name="frequency" id="freq-monthly" value="monthly" class="peer hidden">
+<div class="glass border border-white/10 rounded-2xl p-4 text-center transition-all peer-checked:border-cyan-400 peer-checked:bg-cyan-400/10 hover:border-cyan-400/50">
+<div class="text-3xl mb-2">📅</div>
+<div class="font-semibold text-white">Monthly</div>
+<div class="text-xs text-cyan-300/80">12× per year</div>
+</div>
+</label>
+
+<!-- Yearly -->
+<label class="group cursor-pointer">
+<input type="radio" name="frequency" id="freq-yearly" value="yearly" class="peer hidden" checked>
+<div class="glass border border-white/10 rounded-2xl p-4 text-center transition-all peer-checked:border-cyan-400 peer-checked:bg-cyan-400/10 hover:border-cyan-400/50">
+<div class="text-3xl mb-2">📆</div>
+<div class="font-semibold text-white">Yearly</div>
+<div class="text-xs text-cyan-300/80">1× per year</div>
+</div>
+</label>
+</div>
+</div>
+
+<!-- Result -->
+<div class="glass rounded-3xl p-8 border border-cyan-400/30 glow text-center">
+<div class="uppercase text-xs tracking-[1px] font-medium text-cyan-400 mb-1">YOUR MONEY IN THE FUTURE</div>
+<div id="result" class="font-mono text-7xl font-bold text-white tabular-nums leading-none mb-1">$162,889.46</div>
+<div id="resultSubtitle" class="text-cyan-200 text-lg flex items-center justify-center gap-x-2">
+<span>after</span>
+<span id="resultYears" class="font-semibold text-white">10 years</span>
+<span>at</span>
+<span id="resultRate" class="font-semibold text-white">5.0%</span>
+<span>compounded</span>
+<span id="resultFreq" class="font-semibold text-white">yearly</span>
+</div>
+
+<!-- Fun growth indicator -->
+<div class="mt-6 flex items-center justify-center gap-x-8 text-xs">
+<div class="flex items-center gap-x-1.5">
+<div class="text-emerald-400">▲</div>
+<div id="growthPercent" class="font-medium text-emerald-400">62.9%</div>
+<div class="text-white/60">total growth</div>
+</div>
+<div class="h-3 w-px bg-white/20"></div>
+<div class="flex items-center gap-x-1.5">
+<div class="text-cyan-400">🚀</div>
+<div id="multiplier" class="font-medium text-cyan-400">1.63×</div>
+<div class="text-white/60">your money multiplied</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Footer -->
+<div class="mt-8 text-center">
+<div class="inline-flex items-center gap-x-2 text-white/40 text-sm">
+<span>Built live by Grok • Real-time compound interest engine</span>
+<span class="text-2xl">✦</span>
+<span class="font-mono">Non-linear sliders • 100% vanilla JS</span>
+</div>
+</div>
+</div>
+
+<script>
+// Tailwind script already loaded via CDN
+function initializeTailwind() {
+// No extra config needed - using arbitrary values + standard classes
+console.log('%c🚀 Jafur’s Calculator initialized – fully interactive & vibrant', 'color:#00f5ff; font-family:monospace; font-size:10px');
+}
+
+// Data arrays for non-linear sliders
+const principalValues = [1000, 5000, 10000, 25000, 50000, 100000, 250000, 500000, 750000, 1000000];
+const yearsOptions = [1, 2, 5, 10, 20, 30, 40, 50];
+
+// Core calculation using classic compound interest formula
+function calculateCompoundInterest(P, r, t, n) {
+if (n === 0) return P;
+// A = P × (1 + r/n)^(n×t)
+return P * Math.pow(1 + (r / n), n * t);
+}
+
+// Main update function – runs on every input change
+function updateCompoundInterest() {
+// Get current values
+const pIndex = parseInt(document.getElementById('principalSlider').value);
+const P = principalValues[pIndex];
+
+const tIndex = parseInt(document.getElementById('durationSlider').value);
+const t = yearsOptions[tIndex];
+
+const rateRaw = parseFloat(document.getElementById('rateSlider').value);
+const r = rateRaw / 100;
+
+// Get selected frequency
+const selectedRadio = document.querySelector('input[name="frequency"]:checked');
+let n = 1; // default yearly
+let freqText = 'yearly';
+
+if (selectedRadio) {
+switch (selectedRadio.value) {
+case 'daily':
+n = 365;
+freqText = 'daily';
+break;
+case 'monthly':
+n = 12;
+freqText = 'monthly';
+break;
+case 'yearly':
+n = 1;
+freqText = 'yearly';
+break;
+}
+}
+
+// Calculate future value
+let A = calculateCompoundInterest(P, r, t, n);
+A = Math.round(A * 100) / 100; // round to 2 decimals
+
+// Update live displays
+document.getElementById('principalDisplay').textContent =
+'$' + P.toLocaleString('en-US');
+
+document.getElementById('durationDisplay').textContent =
+t + (t === 1 ? ' year' : ' years');
+
+document.getElementById('rateDisplay').textContent =
+rateRaw.toFixed(1) + '%';
+
+// Big result with currency formatting
+const formatter = new Intl.NumberFormat('en-US', {
+style: 'currency',
+currency: 'USD',
+minimumFractionDigits: 2,
+maximumFractionDigits: 2
+});
+document.getElementById('result').textContent = formatter.format(A);
+
+// Subtitle details
+document.getElementById('resultYears').textContent = t + (t === 1 ? ' year' : ' years');
+document.getElementById('resultRate').textContent = rateRaw.toFixed(1) + '%';
+document.getElementById('resultFreq').textContent = freqText;
+
+// Growth stats
+const growth = ((A - P) / P) * 100;
+document.getElementById('growthPercent').textContent = growth.toFixed(1) + '%';
+
+const multiplier = (A / P).toFixed(2) + '×';
+document.getElementById('multiplier').textContent = multiplier;
+
+// Trigger subtle pop animation
+const resultEl = document.getElementById('result');
+resultEl.style.animation = 'none';
+void resultEl.offsetWidth; // trigger reflow
+resultEl.style.animation = 'popIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+}
+
+// Initialize everything
+window.onload = function() {
+initializeTailwind();
+
+// Set beautiful defaults
+document.getElementById('principalSlider').value = 5; // $100k
+document.getElementById('durationSlider').value = 3; // 10 years
+document.getElementById('rateSlider').value = 5; // 5.0%
+document.getElementById('freq-yearly').checked = true;
+
+// Attach live listeners
+const sliders = [
+document.getElementById('principalSlider'),
+document.getElementById('durationSlider'),
+document.getElementById('rateSlider')
+];
+
+sliders.forEach(slider => {
+slider.addEventListener('input', updateCompoundInterest);
+});
+
+const radios = document.querySelectorAll('input[name="frequency"]');
+radios.forEach(radio => {
+radio.addEventListener('change', updateCompoundInterest);
+});
+
+// First calculation
+updateCompoundInterest();
+
+console.log('%c✅ Fully functional modern web app ready – sliders are non-linear, compounding is accurate, UI is vibrant & neon!', 'color:#00f5ff; font-size:12px');
+};
+</script>
+</body>
+</html>
+```>
