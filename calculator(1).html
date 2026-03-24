@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jafur's Compound Interest Calculator</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #060a12;
+    --surface: #0d1424;
+    --surface2: #121b30;
+    --border: rgba(99,179,255,0.12);
+    --accent1: #00e5ff;
+    --accent2: #ff6b35;
+    --accent3: #a259ff;
+    --gold: #ffd166;
+    --text: #e8f4ff;
+    --muted: #5a7a9f;
+    --glow1: rgba(0,229,255,0.15);
+    --glow2: rgba(255,107,53,0.15);
+    --glow3: rgba(162,89,255,0.15);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+    z-index: 0;
+    animation: drift 12s ease-in-out infinite alternate;
+  }
+  .orb1 { width: 420px; height: 420px; background: var(--glow1); top: -100px; left: -80px; }
+  .orb2 { width: 320px; height: 320px; background: var(--glow2); bottom: -60px; right: -60px; animation-delay: -4s; }
+  .orb3 { width: 260px; height: 260px; background: var(--glow3); top: 40%; left: 55%; animation-delay: -8s; }
+
+  @keyframes drift {
+    from { transform: translate(0, 0) scale(1); }
+    to   { transform: translate(30px, 20px) scale(1.08); }
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 52px;
+    animation: fadeSlideDown 0.8s ease both;
+  }
+  .header-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.35em;
+    color: var(--accent1);
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    opacity: 0.8;
+  }
+  .header h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(32px, 6vw, 58px);
+    font-weight: 800;
+    line-height: 1.05;
+    background: linear-gradient(135deg, var(--accent1) 0%, var(--accent3) 50%, var(--accent2) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .header-sub {
+    margin-top: 12px;
+    font-size: 13px;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+
+  @keyframes fadeSlideDown {
+    from { opacity: 0; transform: translateY(-24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 36px 40px;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+    animation: fadeSlideUp 0.8s ease both;
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent1), transparent);
+    opacity: 0.6;
+  }
+  .card:nth-child(2) { animation-delay: 0.1s; }
+  .card:nth-child(3) { animation-delay: 0.2s; }
+  .card:nth-child(4) { animation-delay: 0.3s; }
+
+  @keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(28px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .input-row {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .input-label {
+    font-family: 'Syne', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    width: 100%;
+    margin-bottom: 6px;
+  }
+  .input-section {
+    margin-bottom: 32px;
+  }
+  .input-section:last-child { margin-bottom: 0; }
+
+  .value-badge {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--accent1);
+    min-width: 120px;
+    text-align: right;
+    transition: color 0.2s;
+    flex-shrink: 0;
+  }
+
+  .slider-wrapper {
+    flex: 1;
+    min-width: 200px;
+    position: relative;
+  }
+  .slider-track {
+    position: relative;
+    height: 8px;
+    background: rgba(99,179,255,0.1);
+    border-radius: 99px;
+    cursor: pointer;
+    border: 1px solid rgba(99,179,255,0.08);
+  }
+  .slider-fill {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    background: linear-gradient(90deg, var(--accent3), var(--accent1));
+    border-radius: 99px;
+    pointer-events: none;
+    transition: width 0.1s;
+    box-shadow: 0 0 12px rgba(0,229,255,0.4);
+  }
+  .slider-thumb {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 22px;
+    height: 22px;
+    background: var(--accent1);
+    border-radius: 50%;
+    box-shadow: 0 0 0 3px rgba(0,229,255,0.2), 0 0 18px rgba(0,229,255,0.5);
+    cursor: grab;
+    transition: box-shadow 0.15s, transform 0.15s;
+    z-index: 2;
+  }
+  .slider-thumb:active {
+    cursor: grabbing;
+    transform: translate(-50%, -50%) scale(1.2);
+    box-shadow: 0 0 0 6px rgba(0,229,255,0.15), 0 0 28px rgba(0,229,255,0.7);
+  }
+  .slider-thumb.rate { background: var(--accent2); box-shadow: 0 0 0 3px rgba(255,107,53,0.2), 0 0 18px rgba(255,107,53,0.5); }
+  .slider-thumb.rate:active { box-shadow: 0 0 0 6px rgba(255,107,53,0.15), 0 0 28px rgba(255,107,53,0.7); }
+
+  .tick-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 2px 0;
+  }
+  .tick {
+    font-size: 9px;
+    color: rgba(90,122,159,0.5);
+    letter-spacing: 0;
+    text-align: center;
+  }
+
+  /* Radio-style compounding buttons */
+  .checkbox-group {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    padding: 10px 20px;
+    border-radius: 12px;
+    border: 1.5px solid var(--border);
+    background: var(--surface2);
+    transition: all 0.2s;
+    font-size: 13px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+    user-select: none;
+    position: relative;
+    overflow: hidden;
+  }
+  .checkbox-label::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--glow1), var(--glow3));
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .checkbox-label:hover { border-color: rgba(99,179,255,0.3); color: var(--text); }
+  .checkbox-label.active {
+    border-color: var(--accent1);
+    color: var(--accent1);
+    box-shadow: 0 0 20px rgba(0,229,255,0.15);
+  }
+  .checkbox-label.active::before { opacity: 1; }
+  .cb-icon {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    border: 1.5px solid currentColor;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+    transition: background 0.15s;
+  }
+  .checkbox-label.active .cb-icon {
+    background: var(--accent1);
+    border-color: var(--accent1);
+  }
+  .cb-check {
+    opacity: 0;
+    transform: scale(0.5) rotate(-10deg);
+    transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    color: var(--bg);
+    font-size: 12px;
+  }
+  .checkbox-label.active .cb-check { opacity: 1; transform: scale(1) rotate(0deg); }
+  .cb-text { position: relative; z-index: 1; }
+
+  .result-card {
+    background: linear-gradient(135deg, rgba(0,229,255,0.06), rgba(162,89,255,0.06));
+    border: 1px solid rgba(0,229,255,0.2);
+    border-radius: 24px;
+    padding: 40px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    animation: fadeSlideUp 0.8s 0.4s ease both;
+  }
+  .result-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent3), var(--accent1), var(--accent2));
+  }
+  .result-label {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+  .result-value {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(42px, 9vw, 76px);
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--gold), var(--accent1));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    animation: pulse-glow 3s ease-in-out infinite;
+    transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.2s;
+  }
+  @keyframes pulse-glow {
+    0%, 100% { filter: brightness(1); }
+    50% { filter: brightness(1.15); }
+  }
+  .result-breakdown {
+    margin-top: 24px;
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .breakdown-item {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 20px;
+    min-width: 140px;
+  }
+  .breakdown-item-label {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .breakdown-item-value {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .breakdown-item-value.positive { color: #4ade80; }
+
+  .slider-tooltip {
+    position: absolute;
+    bottom: calc(100% + 14px);
+    background: var(--surface2);
+    color: var(--accent1);
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    padding: 5px 10px;
+    border-radius: 7px;
+    border: 1px solid rgba(0,229,255,0.2);
+    transform: translateX(-50%);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s;
+    white-space: nowrap;
+    z-index: 10;
+  }
+  .slider-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%; left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: rgba(0,229,255,0.2);
+  }
+  .slider-wrapper:hover .slider-tooltip,
+  .slider-wrapper.dragging .slider-tooltip {
+    opacity: 1;
+  }
+
+  .footer-glow {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent1), var(--accent3), var(--accent2), transparent);
+    opacity: 0.4;
+    pointer-events: none;
+    z-index: 100;
+  }
+
+  @media (max-width: 560px) {
+    .card { padding: 24px 20px; }
+    .result-card { padding: 28px 20px; }
+    .input-row { gap: 12px; }
+    .value-badge { font-size: 18px; min-width: 90px; }
+    .checkbox-group { gap: 10px; }
+    .checkbox-label { padding: 8px 14px; font-size: 11px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+<div class="orb orb3"></div>
+
+<div class="container">
+
+  <header class="header">
+    <div class="header-eyebrow">◈ Financial Modeling Tool</div>
+    <h1>Jafur's Compound<br>Interest Calculator</h1>
+    <div class="header-sub">Configure your investment parameters below</div>
+  </header>
+
+  <!-- Investment Amount -->
+  <div class="card">
+    <div class="input-section">
+      <div class="input-label">Initial Investment</div>
+      <div class="input-row">
+        <div class="slider-wrapper" id="inv-wrapper">
+          <div class="slider-tooltip" id="inv-tooltip">$1,000</div>
+          <div class="slider-track" id="inv-track">
+            <div class="slider-fill" id="inv-fill"></div>
+            <div class="slider-thumb" id="inv-thumb"></div>
+          </div>
+          <div class="tick-row">
+            <span class="tick">$1K</span>
+            <span class="tick">$1M</span>
+          </div>
+        </div>
+        <div class="value-badge" id="inv-value">$1,000</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Duration -->
+  <div class="card">
+    <div class="input-section">
+      <div class="input-label">Time Horizon</div>
+      <div class="input-row">
+        <div class="slider-wrapper" id="dur-wrapper">
+          <div class="slider-tooltip" id="dur-tooltip">1 yr</div>
+          <div class="slider-track" id="dur-track">
+            <div class="slider-fill" id="dur-fill"></div>
+            <div class="slider-thumb" id="dur-thumb"></div>
+          </div>
+          <div class="tick-row">
+            <span class="tick">1Y</span>
+            <span class="tick">50Y</span>
+          </div>
+        </div>
+        <div class="value-badge" id="dur-value">1 yr</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Interest Rate -->
+  <div class="card">
+    <div class="input-section">
+      <div class="input-label">Annual Interest Rate</div>
+      <div class="input-row">
+        <div class="slider-wrapper" id="rate-wrapper">
+          <div class="slider-tooltip" id="rate-tooltip">1.0%</div>
+          <div class="slider-track" id="rate-track">
+            <div class="slider-fill" id="rate-fill" style="background: linear-gradient(90deg, var(--accent2), var(--gold));"></div>
+            <div class="slider-thumb rate" id="rate-thumb"></div>
+          </div>
+          <div class="tick-row">
+            <span class="tick">1%</span>
+            <span class="tick">2%</span>
+            <span class="tick">3%</span>
+            <span class="tick">4%</span>
+            <span class="tick">5%</span>
+            <span class="tick">6%</span>
+            <span class="tick">7%</span>
+            <span class="tick">8%</span>
+            <span class="tick">9%</span>
+            <span class="tick">10%</span>
+          </div>
+        </div>
+        <div class="value-badge" id="rate-value" style="color: var(--accent2);">1.0%</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Compounding — radio-style: exactly one must be selected -->
+  <div class="card">
+    <div class="input-section">
+      <div class="input-label">Compounding Frequency</div>
+      <div class="checkbox-group" id="compound-group">
+        <div class="checkbox-label" data-value="daily">
+          <div class="cb-icon"><span class="cb-check">✓</span></div>
+          <span class="cb-text">Daily</span>
+        </div>
+        <div class="checkbox-label active" data-value="monthly">
+          <div class="cb-icon"><span class="cb-check">✓</span></div>
+          <span class="cb-text">Monthly</span>
+        </div>
+        <div class="checkbox-label" data-value="yearly">
+          <div class="cb-icon"><span class="cb-check">✓</span></div>
+          <span class="cb-text">Yearly</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Result -->
+  <div class="result-card">
+    <div class="result-label">◈ Total Value at End of Period</div>
+    <div class="result-value" id="result-value">$1,010.00</div>
+    <div class="result-breakdown">
+      <div class="breakdown-item">
+        <div class="breakdown-item-label">Principal</div>
+        <div class="breakdown-item-value" id="result-principal">$1,000</div>
+      </div>
+      <div class="breakdown-item">
+        <div class="breakdown-item-label">Interest Earned</div>
+        <div class="breakdown-item-value positive" id="result-interest">+$10.00</div>
+      </div>
+      <div class="breakdown-item">
+        <div class="breakdown-item-label">Total Return</div>
+        <div class="breakdown-item-value positive" id="result-pct">+1.00%</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer-glow"></div>
+
+<script>
+// ── Linear range constants ──────────────────────────────────────────
+const INV_MIN = 1000,  INV_MAX = 1000000;
+const DUR_MIN = 1,     DUR_MAX = 50;
+
+// ── State ───────────────────────────────────────────────────────────
+let principal = INV_MIN;
+let years     = DUR_MIN;
+let rate      = 1.0;
+let compound  = 'monthly'; // single selected value
+
+// ── Format helpers ───────────────────────────────────────────────────
+function fmtMoney(n) {
+  if (n >= 1e9) return '$' + (n / 1e9).toFixed(2) + 'B';
+  if (n >= 1e6) return '$' + (n / 1e6).toFixed(2) + 'M';
+  if (n >= 1e3) return '$' + (n / 1e3).toFixed(1) + 'K';
+  return '$' + n.toFixed(2);
+}
+function fmtMoneyFull(n) {
+  return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+function fmtShort(n) {
+  if (n >= 1e6) return '$' + (n / 1e6).toFixed(2) + 'M';
+  if (n >= 1e3) return '$' + Math.round(n / 1000) + 'K';
+  return '$' + Math.round(n);
+}
+
+// ── Compute & render ─────────────────────────────────────────────────
+function calcAndRender() {
+  const n_map = { daily: 365, monthly: 12, yearly: 1 };
+  const n = n_map[compound];
+  const total = principal * Math.pow(1 + (rate / 100) / n, n * years);
+
+  const interest = total - principal;
+  const pct = ((total / principal) - 1) * 100;
+
+  const resEl = document.getElementById('result-value');
+  resEl.style.transform = 'scale(0.95)';
+  resEl.style.opacity = '0.5';
+  requestAnimationFrame(() => {
+    resEl.textContent = fmtMoneyFull(total);
+    resEl.style.transform = 'scale(1)';
+    resEl.style.opacity = '1';
+  });
+
+  document.getElementById('result-principal').textContent = fmtShort(principal);
+  document.getElementById('result-interest').textContent = '+' + fmtMoneyFull(interest);
+  document.getElementById('result-pct').textContent = '+' + pct.toFixed(2) + '%';
+}
+
+// ── Compound frequency selector (radio behaviour) ────────────────────
+document.getElementById('compound-group').addEventListener('click', e => {
+  const btn = e.target.closest('[data-value]');
+  if (!btn) return;
+
+  // Deactivate all, activate clicked
+  document.querySelectorAll('#compound-group [data-value]').forEach(el => {
+    el.classList.remove('active');
+  });
+  btn.classList.add('active');
+
+  compound = btn.dataset.value;
+  calcAndRender();
+});
+
+// ── Linear slider factory ────────────────────────────────────────────
+function makeLinearSlider({ trackEl, fillEl, thumbEl, tooltipEl, min, max, step, getLabel, onChange, initialVal }) {
+  let dragging = false;
+  const wrapper = trackEl.closest('.slider-wrapper');
+  const numSteps = Math.round((max - min) / step);
+
+  function setVal(v) {
+    v = Math.max(min, Math.min(max, Math.round((v - min) / step) * step + min));
+    const pct = (v - min) / (max - min);
+    fillEl.style.width        = (pct * 100) + '%';
+    thumbEl.style.left        = (pct * 100) + '%';
+    tooltipEl.textContent     = getLabel(v);
+    tooltipEl.style.left      = (pct * 100) + '%';
+    onChange(v);
+  }
+
+  function posToVal(clientX) {
+    const rect = trackEl.getBoundingClientRect();
+    const pct  = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+    return min + Math.round(pct * numSteps) * step;
+  }
+
+  trackEl.addEventListener('pointerdown', e => {
+    dragging = true;
+    wrapper.classList.add('dragging');
+    setVal(posToVal(e.clientX));
+    trackEl.setPointerCapture(e.pointerId);
+  });
+  trackEl.addEventListener('pointermove', e => { if (dragging) setVal(posToVal(e.clientX)); });
+  trackEl.addEventListener('pointerup',   () => { dragging = false; wrapper.classList.remove('dragging'); });
+
+  setVal(initialVal !== undefined ? initialVal : min);
+}
+
+// ── Init sliders ─────────────────────────────────────────────────────
+makeLinearSlider({
+  trackEl:    document.getElementById('inv-track'),
+  fillEl:     document.getElementById('inv-fill'),
+  thumbEl:    document.getElementById('inv-thumb'),
+  tooltipEl:  document.getElementById('inv-tooltip'),
+  min: INV_MIN, max: INV_MAX, step: 1000,
+  initialVal: INV_MIN,
+  getLabel: v => fmtMoney(v),
+  onChange: val => {
+    principal = val;
+    document.getElementById('inv-value').textContent = fmtMoney(val);
+    calcAndRender();
+  }
+});
+
+makeLinearSlider({
+  trackEl:    document.getElementById('dur-track'),
+  fillEl:     document.getElementById('dur-fill'),
+  thumbEl:    document.getElementById('dur-thumb'),
+  tooltipEl:  document.getElementById('dur-tooltip'),
+  min: DUR_MIN, max: DUR_MAX, step: 1,
+  initialVal: DUR_MIN,
+  getLabel: v => v + (v === 1 ? ' yr' : ' yrs'),
+  onChange: val => {
+    years = val;
+    document.getElementById('dur-value').textContent = val + (val === 1 ? ' yr' : ' yrs');
+    calcAndRender();
+  }
+});
+
+makeLinearSlider({
+  trackEl:    document.getElementById('rate-track'),
+  fillEl:     document.getElementById('rate-fill'),
+  thumbEl:    document.getElementById('rate-thumb'),
+  tooltipEl:  document.getElementById('rate-tooltip'),
+  min: 1, max: 10, step: 0.1,
+  initialVal: 1,
+  getLabel: v => v.toFixed(1) + '%',
+  onChange: val => {
+    rate = val;
+    document.getElementById('rate-value').textContent = val.toFixed(1) + '%';
+    calcAndRender();
+  }
+});
+
+// ── Initial render ───────────────────────────────────────────────────
+calcAndRender();
+</script>
+</body>
+</html>
