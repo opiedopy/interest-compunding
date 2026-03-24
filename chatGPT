@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jafur’s Compound Interest Calculator</title>
+
+<style>
+body {
+margin: 0;
+font-family: 'Segoe UI', sans-serif;
+background: linear-gradient(135deg, #1e1e2f, #2a5298);
+color: white;
+display: flex;
+justify-content: center;
+align-items: center;
+height: 100vh;
+}
+
+.app {
+width: 420px;
+padding: 25px;
+border-radius: 20px;
+backdrop-filter: blur(15px);
+background: rgba(255,255,255,0.1);
+box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+}
+
+h1 {
+text-align: center;
+margin-bottom: 25px;
+font-size: 22px;
+letter-spacing: 1px;
+}
+
+.row {
+margin-bottom: 20px;
+}
+
+label {
+display: block;
+margin-bottom: 8px;
+font-size: 14px;
+opacity: 0.9;
+}
+
+.value {
+float: right;
+font-weight: bold;
+color: #00ffd5;
+}
+
+input[type=range] {
+width: 100%;
+appearance: none;
+height: 6px;
+border-radius: 5px;
+background: #444;
+outline: none;
+}
+
+input[type=range]::-webkit-slider-thumb {
+appearance: none;
+width: 18px;
+height: 18px;
+border-radius: 50%;
+background: #00ffd5;
+cursor: pointer;
+box-shadow: 0 0 10px #00ffd5;
+}
+
+.checkbox-group {
+display: flex;
+justify-content: space-between;
+}
+
+.checkbox-group label {
+font-size: 13px;
+}
+
+.result {
+margin-top: 20px;
+text-align: center;
+font-size: 22px;
+font-weight: bold;
+padding: 15px;
+border-radius: 10px;
+background: rgba(0,0,0,0.3);
+box-shadow: inset 0 0 10px rgba(0,255,213,0.3);
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+<h1>Jafur’s Compound Interest Calculator</h1>
+
+<!-- Investment -->
+<div class="row">
+<label>Initial Investment <span class="value" id="investmentVal"></span></label>
+<input type="range" id="investmentSlider" min="0" max="9" step="1">
+</div>
+
+<!-- Years -->
+<div class="row">
+<label>Duration <span class="value" id="yearsVal"></span></label>
+<input type="range" id="yearsSlider" min="0" max="7" step="1">
+</div>
+
+<!-- Interest -->
+<div class="row">
+<label>Interest Rate <span class="value" id="rateVal"></span></label>
+<input type="range" id="rateSlider" min="1" max="10" step="0.1">
+</div>
+
+<!-- Compounding -->
+<div class="row checkbox-group">
+<label><input type="checkbox" name="compound" value="365"> Daily</label>
+<label><input type="checkbox" name="compound" value="12"> Monthly</label>
+<label><input type="checkbox" name="compound" value="1" checked> Yearly</label>
+</div>
+
+<!-- Result -->
+<div class="result" id="result">$0</div>
+</div>
+
+<script>
+const investmentSteps = [1000, 5000, 10000, 25000, 50000, 100000, 250000, 500000, 750000, 1000000];
+const yearSteps = [1, 2, 5, 10, 20, 30, 40, 50];
+
+const investmentSlider = document.getElementById("investmentSlider");
+const yearsSlider = document.getElementById("yearsSlider");
+const rateSlider = document.getElementById("rateSlider");
+
+const investmentVal = document.getElementById("investmentVal");
+const yearsVal = document.getElementById("yearsVal");
+const rateVal = document.getElementById("rateVal");
+const result = document.getElementById("result");
+
+function calculate() {
+const P = investmentSteps[investmentSlider.value];
+const t = yearSteps[yearsSlider.value];
+const r = rateSlider.value / 100;
+
+const checked = document.querySelector('input[name="compound"]:checked');
+const n = checked ? checked.value : 1;
+
+const A = P * Math.pow((1 + r / n), n * t);
+
+result.innerText = "$" + A.toLocaleString(undefined, {maximumFractionDigits: 0});
+}
+
+function updateUI() {
+investmentVal.innerText = "$" + investmentSteps[investmentSlider.value].toLocaleString();
+yearsVal.innerText = yearSteps[yearsSlider.value] + " years";
+rateVal.innerText = rateSlider.value + "%";
+calculate();
+}
+
+document.querySelectorAll("input").forEach(el => {
+el.addEventListener("input", updateUI);
+});
+
+updateUI();
+</script>
+
+</body>
+</html>
