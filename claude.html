@@ -33,7 +33,6 @@
     position: relative;
   }
 
-  /* Animated background grid */
   body::before {
     content: '';
     position: fixed;
@@ -46,7 +45,6 @@
     z-index: 0;
   }
 
-  /* Floating orbs */
   .orb {
     position: fixed;
     border-radius: 50%;
@@ -72,7 +70,6 @@
     padding: 48px 24px 80px;
   }
 
-  /* Header */
   .header {
     text-align: center;
     margin-bottom: 52px;
@@ -109,7 +106,6 @@
     to   { opacity: 1; transform: translateY(0); }
   }
 
-  /* Card */
   .card {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -137,7 +133,6 @@
     to   { opacity: 1; transform: translateY(0); }
   }
 
-  /* Input row */
   .input-row {
     display: flex;
     align-items: center;
@@ -159,7 +154,6 @@
   }
   .input-section:last-child { margin-bottom: 0; }
 
-  /* Value badge */
   .value-badge {
     font-family: 'Syne', sans-serif;
     font-size: 22px;
@@ -171,7 +165,6 @@
     flex-shrink: 0;
   }
 
-  /* Slider */
   .slider-wrapper {
     flex: 1;
     min-width: 200px;
@@ -215,7 +208,6 @@
   .slider-thumb.rate { background: var(--accent2); box-shadow: 0 0 0 3px rgba(255,107,53,0.2), 0 0 18px rgba(255,107,53,0.5); }
   .slider-thumb.rate:active { box-shadow: 0 0 0 6px rgba(255,107,53,0.15), 0 0 28px rgba(255,107,53,0.7); }
 
-  /* Tick marks */
   .tick-row {
     display: flex;
     justify-content: space-between;
@@ -228,7 +220,7 @@
     text-align: center;
   }
 
-  /* Checkboxes */
+  /* Radio-style compounding buttons */
   .checkbox-group {
     display: flex;
     gap: 16px;
@@ -268,10 +260,9 @@
     box-shadow: 0 0 20px rgba(0,229,255,0.15);
   }
   .checkbox-label.active::before { opacity: 1; }
-  .checkbox-label input[type="checkbox"] { display: none; }
   .cb-icon {
     width: 18px; height: 18px;
-    border-radius: 5px;
+    border-radius: 50%;
     border: 1.5px solid currentColor;
     display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
@@ -293,7 +284,6 @@
   .checkbox-label.active .cb-check { opacity: 1; transform: scale(1) rotate(0deg); }
   .cb-text { position: relative; z-index: 1; }
 
-  /* Result panel */
   .result-card {
     background: linear-gradient(135deg, rgba(0,229,255,0.06), rgba(162,89,255,0.06));
     border: 1px solid rgba(0,229,255,0.2);
@@ -331,6 +321,7 @@
     line-height: 1;
     letter-spacing: -0.02em;
     animation: pulse-glow 3s ease-in-out infinite;
+    transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.2s;
   }
   @keyframes pulse-glow {
     0%, 100% { filter: brightness(1); }
@@ -365,14 +356,6 @@
   }
   .breakdown-item-value.positive { color: #4ade80; }
 
-  /* Separator */
-  .divider {
-    height: 1px;
-    background: var(--border);
-    margin: 32px 0;
-  }
-
-  /* Tooltip for hover */
   .slider-tooltip {
     position: absolute;
     bottom: calc(100% + 14px);
@@ -404,7 +387,6 @@
     opacity: 1;
   }
 
-  /* Glow line at bottom */
   .footer-glow {
     position: fixed;
     bottom: 0; left: 0; right: 0;
@@ -452,14 +434,6 @@
           </div>
           <div class="tick-row">
             <span class="tick">$1K</span>
-            <span class="tick">$5K</span>
-            <span class="tick">$10K</span>
-            <span class="tick">$25K</span>
-            <span class="tick">$50K</span>
-            <span class="tick">$100K</span>
-            <span class="tick">$250K</span>
-            <span class="tick">$500K</span>
-            <span class="tick">$750K</span>
             <span class="tick">$1M</span>
           </div>
         </div>
@@ -481,12 +455,6 @@
           </div>
           <div class="tick-row">
             <span class="tick">1Y</span>
-            <span class="tick">2Y</span>
-            <span class="tick">5Y</span>
-            <span class="tick">10Y</span>
-            <span class="tick">20Y</span>
-            <span class="tick">30Y</span>
-            <span class="tick">40Y</span>
             <span class="tick">50Y</span>
           </div>
         </div>
@@ -524,26 +492,23 @@
     </div>
   </div>
 
-  <!-- Compounding -->
+  <!-- Compounding — radio-style: exactly one must be selected -->
   <div class="card">
     <div class="input-section">
       <div class="input-label">Compounding Frequency</div>
-      <div class="checkbox-group">
-        <label class="checkbox-label" id="cb-daily">
-          <input type="checkbox" name="compound" value="daily">
+      <div class="checkbox-group" id="compound-group">
+        <div class="checkbox-label" data-value="daily">
           <div class="cb-icon"><span class="cb-check">✓</span></div>
           <span class="cb-text">Daily</span>
-        </label>
-        <label class="checkbox-label active" id="cb-monthly">
-          <input type="checkbox" name="compound" value="monthly" checked>
+        </div>
+        <div class="checkbox-label active" data-value="monthly">
           <div class="cb-icon"><span class="cb-check">✓</span></div>
           <span class="cb-text">Monthly</span>
-        </label>
-        <label class="checkbox-label" id="cb-yearly">
-          <input type="checkbox" name="compound" value="yearly">
+        </div>
+        <div class="checkbox-label" data-value="yearly">
           <div class="cb-icon"><span class="cb-check">✓</span></div>
           <span class="cb-text">Yearly</span>
-        </label>
+        </div>
       </div>
     </div>
   </div>
@@ -573,100 +538,15 @@
 <div class="footer-glow"></div>
 
 <script>
-// ── Non-linear step arrays ──────────────────────────────────────────
-const INV_STEPS = [1000, 5000, 10000, 25000, 50000, 100000, 250000, 500000, 750000, 1000000];
-const DUR_STEPS = [1, 2, 5, 10, 20, 30, 40, 50];
+// ── Linear range constants ──────────────────────────────────────────
+const INV_MIN = 1000,  INV_MAX = 1000000;
+const DUR_MIN = 1,     DUR_MAX = 50;
 
 // ── State ───────────────────────────────────────────────────────────
-let invIdx = 0;
-let durIdx = 0;
-let rateStep = 0; // 0 = 1.0%, 90 = 10.0%  (0.1% each)
-let compounds = { daily: false, monthly: true, yearly: false };
-
-// ── Helper: build non-linear slider ─────────────────────────────────
-function makeDiscreteSlider({ trackEl, fillEl, thumbEl, tooltipEl, steps, getLabel, onChange, thumbClass }) {
-  const n = steps.length;
-  let idx = 0;
-  let dragging = false;
-  const wrapper = trackEl.closest('.slider-wrapper');
-
-  function setIdx(i) {
-    idx = Math.max(0, Math.min(n - 1, i));
-    const pct = idx / (n - 1);
-    fillEl.style.width = (pct * 100) + '%';
-    thumbEl.style.left = (pct * 100) + '%';
-    tooltipEl.textContent = getLabel(steps[idx], idx);
-    tooltipEl.style.left = (pct * 100) + '%';
-    onChange(idx, steps[idx]);
-  }
-
-  function posToIdx(clientX) {
-    const rect = trackEl.getBoundingClientRect();
-    const pct = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
-    return Math.round(pct * (n - 1));
-  }
-
-  trackEl.addEventListener('pointerdown', e => {
-    dragging = true;
-    wrapper.classList.add('dragging');
-    setIdx(posToIdx(e.clientX));
-    trackEl.setPointerCapture(e.pointerId);
-  });
-  trackEl.addEventListener('pointermove', e => {
-    if (!dragging) return;
-    setIdx(posToIdx(e.clientX));
-  });
-  trackEl.addEventListener('pointerup', () => {
-    dragging = false;
-    wrapper.classList.remove('dragging');
-  });
-
-  setIdx(0);
-  return { setIdx, getIdx: () => idx };
-}
-
-// ── Helper: build linear slider ──────────────────────────────────────
-function makeLinearSlider({ trackEl, fillEl, thumbEl, tooltipEl, steps, getLabel, onChange }) {
-  const n = steps - 1; // 90 steps for 1.0–10.0%
-  let step = 0;
-  let dragging = false;
-  const wrapper = trackEl.closest('.slider-wrapper');
-
-  function setStep(s) {
-    step = Math.max(0, Math.min(n, s));
-    const pct = step / n;
-    fillEl.style.width = (pct * 100) + '%';
-    thumbEl.style.left = (pct * 100) + '%';
-    const val = 1 + step * 0.1;
-    tooltipEl.textContent = getLabel(val);
-    tooltipEl.style.left = (pct * 100) + '%';
-    onChange(val);
-  }
-
-  function posToStep(clientX) {
-    const rect = trackEl.getBoundingClientRect();
-    const pct = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
-    return Math.round(pct * n);
-  }
-
-  trackEl.addEventListener('pointerdown', e => {
-    dragging = true;
-    wrapper.classList.add('dragging');
-    setStep(posToStep(e.clientX));
-    trackEl.setPointerCapture(e.pointerId);
-  });
-  trackEl.addEventListener('pointermove', e => {
-    if (!dragging) return;
-    setStep(posToStep(e.clientX));
-  });
-  trackEl.addEventListener('pointerup', () => {
-    dragging = false;
-    wrapper.classList.remove('dragging');
-  });
-
-  setStep(0);
-  return { setStep };
-}
+let principal = INV_MIN;
+let years     = DUR_MIN;
+let rate      = 1.0;
+let compound  = 'monthly'; // single selected value
 
 // ── Format helpers ───────────────────────────────────────────────────
 function fmtMoney(n) {
@@ -685,43 +565,21 @@ function fmtShort(n) {
 }
 
 // ── Compute & render ─────────────────────────────────────────────────
-let principal = INV_STEPS[0];
-let years = DUR_STEPS[0];
-let rate = 1.0;
-
 function calcAndRender() {
   const n_map = { daily: 365, monthly: 12, yearly: 1 };
-  const selected = Object.keys(compounds).filter(k => compounds[k]);
-
-  let total = 0;
-  let count = 0;
-
-  if (selected.length === 0) {
-    // No compounding selected — simple interest
-    total = principal * (1 + (rate / 100) * years);
-  } else {
-    // Average of selected compounding methods
-    for (const k of selected) {
-      const n = n_map[k];
-      total += principal * Math.pow(1 + (rate / 100) / n, n * years);
-      count++;
-    }
-    total = total / count;
-  }
+  const n = n_map[compound];
+  const total = principal * Math.pow(1 + (rate / 100) / n, n * years);
 
   const interest = total - principal;
   const pct = ((total / principal) - 1) * 100;
 
-  // Animate the result
   const resEl = document.getElementById('result-value');
-  const prevText = resEl.textContent;
   resEl.style.transform = 'scale(0.95)';
   resEl.style.opacity = '0.5';
   requestAnimationFrame(() => {
     resEl.textContent = fmtMoneyFull(total);
     resEl.style.transform = 'scale(1)';
     resEl.style.opacity = '1';
-    resEl.style.transition = 'transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.2s';
   });
 
   document.getElementById('result-principal').textContent = fmtShort(principal);
@@ -729,29 +587,80 @@ function calcAndRender() {
   document.getElementById('result-pct').textContent = '+' + pct.toFixed(2) + '%';
 }
 
+// ── Compound frequency selector (radio behaviour) ────────────────────
+document.getElementById('compound-group').addEventListener('click', e => {
+  const btn = e.target.closest('[data-value]');
+  if (!btn) return;
+
+  // Deactivate all, activate clicked
+  document.querySelectorAll('#compound-group [data-value]').forEach(el => {
+    el.classList.remove('active');
+  });
+  btn.classList.add('active');
+
+  compound = btn.dataset.value;
+  calcAndRender();
+});
+
+// ── Linear slider factory ────────────────────────────────────────────
+function makeLinearSlider({ trackEl, fillEl, thumbEl, tooltipEl, min, max, step, getLabel, onChange, initialVal }) {
+  let dragging = false;
+  const wrapper = trackEl.closest('.slider-wrapper');
+  const numSteps = Math.round((max - min) / step);
+
+  function setVal(v) {
+    v = Math.max(min, Math.min(max, Math.round((v - min) / step) * step + min));
+    const pct = (v - min) / (max - min);
+    fillEl.style.width        = (pct * 100) + '%';
+    thumbEl.style.left        = (pct * 100) + '%';
+    tooltipEl.textContent     = getLabel(v);
+    tooltipEl.style.left      = (pct * 100) + '%';
+    onChange(v);
+  }
+
+  function posToVal(clientX) {
+    const rect = trackEl.getBoundingClientRect();
+    const pct  = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+    return min + Math.round(pct * numSteps) * step;
+  }
+
+  trackEl.addEventListener('pointerdown', e => {
+    dragging = true;
+    wrapper.classList.add('dragging');
+    setVal(posToVal(e.clientX));
+    trackEl.setPointerCapture(e.pointerId);
+  });
+  trackEl.addEventListener('pointermove', e => { if (dragging) setVal(posToVal(e.clientX)); });
+  trackEl.addEventListener('pointerup',   () => { dragging = false; wrapper.classList.remove('dragging'); });
+
+  setVal(initialVal !== undefined ? initialVal : min);
+}
+
 // ── Init sliders ─────────────────────────────────────────────────────
-makeDiscreteSlider({
-  trackEl: document.getElementById('inv-track'),
-  fillEl: document.getElementById('inv-fill'),
-  thumbEl: document.getElementById('inv-thumb'),
-  tooltipEl: document.getElementById('inv-tooltip'),
-  steps: INV_STEPS,
+makeLinearSlider({
+  trackEl:    document.getElementById('inv-track'),
+  fillEl:     document.getElementById('inv-fill'),
+  thumbEl:    document.getElementById('inv-thumb'),
+  tooltipEl:  document.getElementById('inv-tooltip'),
+  min: INV_MIN, max: INV_MAX, step: 1000,
+  initialVal: INV_MIN,
   getLabel: v => fmtMoney(v),
-  onChange: (idx, val) => {
+  onChange: val => {
     principal = val;
     document.getElementById('inv-value').textContent = fmtMoney(val);
     calcAndRender();
   }
 });
 
-makeDiscreteSlider({
-  trackEl: document.getElementById('dur-track'),
-  fillEl: document.getElementById('dur-fill'),
-  thumbEl: document.getElementById('dur-thumb'),
-  tooltipEl: document.getElementById('dur-tooltip'),
-  steps: DUR_STEPS,
+makeLinearSlider({
+  trackEl:    document.getElementById('dur-track'),
+  fillEl:     document.getElementById('dur-fill'),
+  thumbEl:    document.getElementById('dur-thumb'),
+  tooltipEl:  document.getElementById('dur-tooltip'),
+  min: DUR_MIN, max: DUR_MAX, step: 1,
+  initialVal: DUR_MIN,
   getLabel: v => v + (v === 1 ? ' yr' : ' yrs'),
-  onChange: (idx, val) => {
+  onChange: val => {
     years = val;
     document.getElementById('dur-value').textContent = val + (val === 1 ? ' yr' : ' yrs');
     calcAndRender();
@@ -759,33 +668,18 @@ makeDiscreteSlider({
 });
 
 makeLinearSlider({
-  trackEl: document.getElementById('rate-track'),
-  fillEl: document.getElementById('rate-fill'),
-  thumbEl: document.getElementById('rate-thumb'),
-  tooltipEl: document.getElementById('rate-tooltip'),
-  steps: 91,
+  trackEl:    document.getElementById('rate-track'),
+  fillEl:     document.getElementById('rate-fill'),
+  thumbEl:    document.getElementById('rate-thumb'),
+  tooltipEl:  document.getElementById('rate-tooltip'),
+  min: 1, max: 10, step: 0.1,
+  initialVal: 1,
   getLabel: v => v.toFixed(1) + '%',
   onChange: val => {
     rate = val;
     document.getElementById('rate-value').textContent = val.toFixed(1) + '%';
     calcAndRender();
   }
-});
-
-// ── Checkboxes ───────────────────────────────────────────────────────
-const cbMap = {
-  daily: document.getElementById('cb-daily'),
-  monthly: document.getElementById('cb-monthly'),
-  yearly: document.getElementById('cb-yearly'),
-};
-
-Object.entries(cbMap).forEach(([key, el]) => {
-  el.addEventListener('click', () => {
-    compounds[key] = !compounds[key];
-    el.classList.toggle('active', compounds[key]);
-    el.querySelector('input').checked = compounds[key];
-    calcAndRender();
-  });
 });
 
 // ── Initial render ───────────────────────────────────────────────────
